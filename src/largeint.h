@@ -27,8 +27,10 @@ private:
 	bool isZero();
 	void trim();
 	unsortedList<short> addTwoLists(unsortedList<short> &summand1,unsortedList<short> &summand2,short radix);
+	unsortedList<short> subtractTwoLists(unsortedList<short> minuend,unsortedList<short> subtrahend, short radix);
 	//Will run as long as divisor is less than 2^15
 	divResult divideList(unsortedList<short> dividend,short divisor,short radix);
+	//Should always run, but less efficiently
 	bigDivResult divideTwoLargeInt(largeInt divisor,largeInt dividend,short radix);
 public:
 

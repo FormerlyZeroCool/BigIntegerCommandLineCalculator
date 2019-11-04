@@ -61,19 +61,24 @@ bigDivResult largeInt::divideTwoLargeInt(largeInt divisor,largeInt dividend,shor
 			else
 				insertCount--;
 
+			/*
 			std::cout<<"Building Portion Of Dividend: ";
 			portionOfDividend.printNum();
 			std::cout<<std::endl;
+			*/
 
 		}
-		if(!portionOfDividend.isZero() //&& divisor <= portionOfDividend
+		if(!portionOfDividend.isZero() && divisor <= portionOfDividend
 		)
 		{
+
 			std::cout<<"Portion Of Dividend: ";
 			portionOfDividend.printNum();
 			std::cout<<std::endl<<"divisor: ";
 			divisor.printNum();
 			std::cout<<std::endl;
+
+
 			result.insertTail(1);
 			largeInt remainder = portionOfDividend-divisor;
 			portionOfDividend.number.emptyList();
@@ -84,21 +89,27 @@ bigDivResult largeInt::divideTwoLargeInt(largeInt divisor,largeInt dividend,shor
 			std::cout<<std::endl<<"remainder: ";
 			remainder.printNum();
 			std::cout<<std::endl;
+
+			std::cout<<"tfewrqwerfwerfgwerfewevsijn"<<std::endl;
 			//insert remainder in head of portionofdividend
 			if(!remainder.isZero())
 			{
 				iterator<short> remainderIt = remainder.number.rbegin();
 				while(remainderIt != remainder.number.rend())
 				{
+					std::cout<<"tfevsijn"<<std::endl;
 					portionOfDividend.number.insertHead(*remainderIt);
-					remainderIt--;
+					--remainderIt;
 				}
+				std::cout<<"sefseiuheiuheriuhijn"<<std::endl;
 				//portionOfDividend.trim();
+
+				/*
 				std::cout<<"Portion Of Dividend after subtraction, and rebuilding: ";
 				portionOfDividend.printNum();
 				std::cout<<std::endl;
+				*/
 			}
-			portionOfDividend.trim();
 			insertCount++;
 		}
 		else if(divIt == nullptr)
@@ -148,13 +159,14 @@ unsortedList<short> largeInt::addTwoLists(unsortedList<short> &summand1,unsorted
 	return endSum;
 }
 
-unsortedList<short> subtractTwoLists(unsortedList<short> minuend,unsortedList<short> subtrahend, short radix)
+unsortedList<short> largeInt::subtractTwoLists(unsortedList<short> minuend,unsortedList<short> subtrahend, short radix)
 {
 	iterator<short> oIt = subtrahend.rbegin();
 	iterator<short> tIt = minuend.rbegin();
 	iterator<short> walkerTIt = tIt;
 	unsortedList<short> result;
 	short cr = 0;
+	std::cout<<"Hello from subtractTwoLists \n";
 	while(oIt != nullptr && tIt != nullptr)
 	{
 		if(*tIt < *oIt)
@@ -489,10 +501,18 @@ largeInt largeInt::operator-(largeInt subtrahend)
 	{
 		if(subtrahend <= *this)
 		{
+
+			std::cout<< "Subtrahend less than this" <<std::endl;
+			this->printNum();
+			std::cout<<std::endl;
+			subtrahend.printNum();
+			std::cout<<std::endl;
 			result = subtractTwoLists(this->number,subtrahend.number,radix);
+			std::cout<< "Subtrahend less than this" <<std::endl;
 		}
 		else
 		{
+			std::cout<< "subtrahend greater than this"<<std::endl;
 			result = subtractTwoLists(subtrahend.number,this->number,radix);
 			isNeg = true;
 		}
@@ -547,7 +567,7 @@ bool largeInt::operator<=(largeInt& o)
 	bool isLessThan = false;
 	o.trim();
 	this->trim();
-	if(number.getLength() <= o.number.getLength())
+	if(number.getLength() < o.number.getLength())
 	{
 		isLessThan = true;
 	}

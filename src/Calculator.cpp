@@ -640,6 +640,7 @@ largeInt calc(char op,largeInt and1,largeInt and2)
   	  and2.printNum();
   	  std::cout<<" = ";
   	  result.printNum();
+  	  std::cout<<std::endl;
     }
     return result;
 }

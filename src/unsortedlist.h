@@ -63,13 +63,20 @@ bool iterator<t>::operator!=(const iterator<t> o)
 template <class t>
 bool iterator<t>::operator!=(const node<t> *o)
 {
+
   return this->currentNode != o;
 }
 
 template <class t>
 bool iterator<t>::operator!=(const t o)
 {
-  return this->currentNode->data != o.currentNode->data;
+	if(currentNode == nullptr)
+	{
+		std::cout<<("Trying to Dereference Null iterator in != operator");
+		return true;
+	}
+	else
+		return this->currentNode->data != o.currentNode->data;
 }
 template <class t>
   iterator<t>::iterator(node<t> *starting):
@@ -100,11 +107,23 @@ template <class t>
   }
 template <class t>
   t& iterator<t>::operator*(){
+	try{
+		if(currentNode == nullptr)
+			throw int(1);
     return currentNode->data;
+	}catch(int i){
+		std::cout<<"Error in * operator trying to dereference null ptr";
+	}
   }
 template <class t>
   t& iterator<t>::operator->(){
+	try{
+		if(currentNode == nullptr)
+			throw int(1);
     return currentNode->data;
+}catch(int i){
+	std::cout<<"Error in -> operator trying to dereference null ptr";
+}
   }
 
 
