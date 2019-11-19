@@ -38,7 +38,14 @@ class iterator
   void operator=(const t data);
   t& operator*();
   t& operator->();
+  node<t>* getCurrent();
 };
+
+template <class t>
+node<t>* iterator<t>::getCurrent()
+{
+	return currentNode;
+}
 
 template <class t>
 void iterator<t>::operator=(const t data)
@@ -63,7 +70,6 @@ bool iterator<t>::operator!=(const iterator<t> o)
 template <class t>
 bool iterator<t>::operator!=(const node<t> *o)
 {
-
   return this->currentNode != o;
 }
 
@@ -107,13 +113,7 @@ template <class t>
   }
 template <class t>
   t& iterator<t>::operator*(){
-	try{
-		if(currentNode == nullptr)
-			throw int(1);
     return currentNode->data;
-	}catch(int i){
-		std::cout<<"Error in * operator trying to dereference null ptr";
-	}
   }
 template <class t>
   t& iterator<t>::operator->(){
@@ -309,9 +309,9 @@ void unsortedList<t>::insertHead(t item)
 template <class t>
 unsortedList<t>::unsortedList(const unsortedList<t> &o)
 {
-  len = 0;
-  head = nullptr;
-  tail = nullptr;
+	head = nullptr;
+	tail = nullptr;
+	len = 0;
   node<t>* currentOther = o.head;
   while(currentOther != nullptr)
   {
@@ -343,7 +343,10 @@ unsortedList<t>::~unsortedList()
 template <class t>
 void unsortedList<t>::operator=(const unsortedList<t> &o)
 {
-
+	this->emptyList();
+	head = nullptr;
+	tail = nullptr;
+	len = 0;
   if(this->head != o.head && o.head != nullptr)
   {
 

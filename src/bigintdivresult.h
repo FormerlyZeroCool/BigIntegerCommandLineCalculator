@@ -19,7 +19,8 @@ struct bigDivResult{
 	unsortedList<short> quotientNum,
 	bool quotientIsNeg,
 	unsortedList<short> remainderNum,
-	bool remainderIsNeg):quotientNum(quotientNum),quotientIsNeg(quotientIsNeg),remainderNum(remainderNum),remainderIsNeg(remainderIsNeg)
+	bool remainderIsNeg)
+	:quotientNum(quotientNum),quotientIsNeg(quotientIsNeg),remainderNum(remainderNum),remainderIsNeg(remainderIsNeg)
 	{
 
 	}

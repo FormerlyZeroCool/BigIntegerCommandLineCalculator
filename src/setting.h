@@ -8,7 +8,7 @@ private:
 	t dat;
 	//Currently unused
 	std::string name;
-	//Currently unused
+	//Used as message shown when setting is changed
 	std::string message;
 	//Used as key in settings hashtable
 	std::string command;
@@ -20,7 +20,7 @@ public:
 		dat(dat),name(name),command(command){};
 
 	setting(std::string name,std::string command,std::string message,t dat):
-		dat(dat),name(name),command(command),message(message){};
+		dat(dat),name(name),message(message),command(command){};
 
 	bool operator==(const t &dat)
 	{
@@ -67,5 +67,6 @@ public:
 	{
 		this->command = com;
 	}
+
 };
 //class cmdSetting

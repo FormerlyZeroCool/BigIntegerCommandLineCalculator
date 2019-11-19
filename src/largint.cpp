@@ -6,6 +6,7 @@
  */
 
 #include "largeint.h"
+
 //Will run as long as divisor is less than 2^15
 divResult largeInt::divideList(unsortedList<short> dividend,short divisor,short radix)
 {
@@ -42,74 +43,36 @@ bigDivResult largeInt::divideTwoLargeInt(largeInt divisor,largeInt dividend,shor
 
 	largeInt portionOfDividend("");
 	portionOfDividend.setRadix(2);
-	iterator<short> divIt = dividend.number.begin();
 	unsortedList<short> result;
 	int insertCount = 0;
 	divisor.setRadix(2);
 	dividend.setRadix(2);
 
+	iterator<short> divIt = dividend.number.begin();
 	while(!dividend.number.isEmpty())
 	{
-		while(divIt != nullptr && portionOfDividend < divisor)
+		//std::cout<<"Dividend = "<<dividend<<std::endl;
+		//std::cout<<"Portion of Dividend = "<<portionOfDividend<<std::endl;
+		//std::cout<<"Divisor = "<<divisor<<std::endl;
+		while(divIt != nullptr && (portionOfDividend < divisor))
 		{
 			if(!portionOfDividend.isZero() || *divIt != 0)
-				portionOfDividend.number.insertTail(*divIt);
+				portionOfDividend.insertTail(*divIt);
 			divIt++;
 			dividend.number.removeHead();
 			if(insertCount==0)
-			result.insertTail(0);
+				result.insertTail(0);
 			else
 				insertCount--;
-
-			/*
-			std::cout<<"Building Portion Of Dividend: ";
-			portionOfDividend.printNum();
-			std::cout<<std::endl;
-			*/
 
 		}
 		if(!portionOfDividend.isZero() && divisor <= portionOfDividend
 		)
 		{
-
-			std::cout<<"Portion Of Dividend: ";
-			portionOfDividend.printNum();
-			std::cout<<std::endl<<"divisor: ";
-			divisor.printNum();
-			std::cout<<std::endl;
-
-
 			result.insertTail(1);
-			largeInt remainder = portionOfDividend-divisor;
-			portionOfDividend.number.emptyList();
+			portionOfDividend = ((portionOfDividend-divisor));
 
-			///trim subtraction result
-			remainder.trim();
-
-			std::cout<<std::endl<<"remainder: ";
-			remainder.printNum();
-			std::cout<<std::endl;
-
-			std::cout<<"tfewrqwerfwerfgwerfewevsijn"<<std::endl;
-			//insert remainder in head of portionofdividend
-			if(!remainder.isZero())
-			{
-				iterator<short> remainderIt = remainder.number.rbegin();
-				while(remainderIt != remainder.number.rend())
-				{
-					std::cout<<"tfevsijn"<<std::endl;
-					portionOfDividend.number.insertHead(*remainderIt);
-					--remainderIt;
-				}
-				std::cout<<"sefseiuheiuheriuhijn"<<std::endl;
-				//portionOfDividend.trim();
-
-				/*
-				std::cout<<"Portion Of Dividend after subtraction, and rebuilding: ";
-				portionOfDividend.printNum();
-				std::cout<<std::endl;
-				*/
-			}
+			portionOfDividend.trim();
 			insertCount++;
 		}
 		else if(divIt == nullptr)
@@ -122,9 +85,11 @@ bigDivResult largeInt::divideTwoLargeInt(largeInt divisor,largeInt dividend,shor
 		}
 	}
 
-	largeInt intResult = largeInt(result,isNegLocal,2);
-	intResult.setRadix(originalThisRadix);
-	portionOfDividend.setRadix(originalThisRadix);
+	largeInt intResult(result,isNegLocal,2);
+	if(2 !=  originalThisRadix)
+		intResult.setRadix(originalThisRadix);
+	if(2 != radix)
+		portionOfDividend.setRadix(originalThisRadix);
 	return bigDivResult(intResult.number,isNegLocal,portionOfDividend.number,isNegLocal);
 }
 unsortedList<short> largeInt::addTwoLists(unsortedList<short> &summand1,unsortedList<short> &summand2,short radix)
@@ -166,7 +131,6 @@ unsortedList<short> largeInt::subtractTwoLists(unsortedList<short> minuend,unsor
 	iterator<short> walkerTIt = tIt;
 	unsortedList<short> result;
 	short cr = 0;
-	std::cout<<"Hello from subtractTwoLists \n";
 	while(oIt != nullptr && tIt != nullptr)
 	{
 		if(*tIt < *oIt)
@@ -244,21 +208,6 @@ bool largeInt::isZero()
 	return isZero;
 }
 
-void largeInt::setRadix(short newRadix)
-{
-
-	divResult result(number,0);
-	unsortedList<short> convertedNum;
-	while(!isEqualToZero(result.quotient))
-	{
-		result = divideList(result.quotient,newRadix,this->radix);
-		convertedNum.insertHead(result.remainder);
-	}
-
-	this->number = convertedNum;
-	this->radix = newRadix;
-
-}
 void largeInt::operator+=(largeInt summand)
 {
 	bool isNeg = false;
@@ -436,11 +385,24 @@ largeInt largeInt::operator/(largeInt divisor)
 	return largeInt(result.quotientNum,result.quotientIsNeg,this->radix);
 }
 
+largeInt largeInt::operator/=(largeInt divisor)
+{
+	bigDivResult result = divideTwoLargeInt(divisor,*this,this->radix);
+	*this = largeInt(result.quotientNum,result.quotientIsNeg,this->radix);
+	return *this;
+}
+
 largeInt largeInt::operator%(largeInt divisor)
 {
 	bigDivResult result = divideTwoLargeInt(divisor,*this,this->radix);
 
 	return largeInt(result.remainderNum,result.remainderIsNeg,this->radix);
+}
+largeInt largeInt::operator%=(largeInt divisor)
+{
+	bigDivResult result = divideTwoLargeInt(divisor,*this,this->radix);
+	*this = largeInt(result.remainderNum,result.remainderIsNeg,this->radix);
+	return *this;
 }
 
 void largeInt::operator-=(largeInt subtrahend)
@@ -501,18 +463,10 @@ largeInt largeInt::operator-(largeInt subtrahend)
 	{
 		if(subtrahend <= *this)
 		{
-
-			std::cout<< "Subtrahend less than this" <<std::endl;
-			this->printNum();
-			std::cout<<std::endl;
-			subtrahend.printNum();
-			std::cout<<std::endl;
 			result = subtractTwoLists(this->number,subtrahend.number,radix);
-			std::cout<< "Subtrahend less than this" <<std::endl;
 		}
 		else
 		{
-			std::cout<< "subtrahend greater than this"<<std::endl;
 			result = subtractTwoLists(subtrahend.number,this->number,radix);
 			isNeg = true;
 		}
@@ -562,6 +516,89 @@ bool largeInt::operator<(largeInt& o)
 	}
 	return isLessThan;
 }
+
+largeInt largeInt::operator^(largeInt power)
+{
+	largeInt one("1");
+	largeInt dat("1");
+	largeInt maxbase("4000");
+	largeInt minbase("200");
+	if(*this <=maxbase || minbase<=*this || *this == one)
+	{
+		for(largeInt i = 0;i < power; i += 1)
+		{
+			dat *= *this;
+
+		}
+	}
+	else
+	{
+		dat.setRadix((short) this->toLong());
+		for(largeInt i = 0;i < power; i += 1)
+		{
+			dat.insertTail(0);
+		}
+		dat.setRadix(radix);
+	}
+	return dat;
+}
+
+bool largeInt::operator>(largeInt& o)
+{
+	bool isGreaterThan = false;
+	o.trim();
+	this->trim();
+	if(number.getLength() > o.number.getLength())
+	{
+		isGreaterThan = true;
+	}
+	else if (number.getLength() == o.number.getLength())
+	{
+		iterator<short> tIt = number.begin();
+		iterator<short> oIt = o.number.begin();
+		bool checking = true;
+		while(!isGreaterThan && checking && tIt != nullptr && oIt != nullptr)
+		{
+			if(*tIt > *oIt)
+				isGreaterThan = true;
+			else if(*tIt < *oIt)
+				checking = false;
+			*tIt++;
+			*oIt++;
+		}
+	}
+	return isGreaterThan;
+}
+bool largeInt::operator>=(largeInt& o)
+{
+	bool isGreaterThan = false;
+	o.trim();
+	this->trim();
+	if(number.getLength() > o.number.getLength())
+	{
+		isGreaterThan = true;
+	}
+	else if (number.getLength() == o.number.getLength())
+	{
+		iterator<short> tIt = number.begin();
+		iterator<short> oIt = o.number.begin();
+		bool checking = true;
+		while(!isGreaterThan && checking && tIt != nullptr && oIt != nullptr)
+		{
+			if(*tIt > *oIt)
+				isGreaterThan = true;
+			else if(*tIt < *oIt)
+				checking = false;
+			*tIt++;
+			*oIt++;
+		}
+	}
+	if(!isGreaterThan)
+	{
+		isGreaterThan = this->number == o.number;
+	}
+	return isGreaterThan;
+}
 bool largeInt::operator<=(largeInt& o)
 {
 	bool isLessThan = false;
@@ -591,6 +628,59 @@ bool largeInt::operator<=(largeInt& o)
 		isLessThan = this->number == o.number;
 	}
 	return isLessThan;
+}
+
+std::istream& operator>>(std::istream &i,largeInt &l)
+{
+	std::string data;
+	i>>data;
+	l = data;
+	return i;
+}
+std::ostream& operator<<(std::ostream &o,largeInt &l)
+	{
+	std::stack<char> num;
+	long count = 0;
+	for(iterator<short> i = l.number.rbegin();i != nullptr;i--)
+	{
+		if(count % 3 == 0 && count != 0)
+		{
+			num.push(',');
+		}
+		num.push(*i<10?*i+48:*i+55);
+		count++;
+	}
+		if(l.negative)
+		{
+			o<<'-';
+		}
+		char n;
+		while(!num.empty())
+		{
+			n = num.top();
+			num.pop();
+			o<<n;
+		}
+		if(l.number.isEmpty())
+			o<<0;
+
+		return o;
+	}
+
+void largeInt::setRadix(short newRadix)
+{
+
+	divResult result(number,0);
+	unsortedList<short> convertedNum;
+	while(!isEqualToZero(result.quotient))
+	{
+		result = divideList(result.quotient,newRadix,this->radix);
+		convertedNum.insertHead(result.remainder);
+	}
+
+	this->number = convertedNum;
+	this->radix = newRadix;
+
 }
 void largeInt::printNum()
 {
@@ -622,6 +712,11 @@ void largeInt::operator=(const largeInt& other)
 void largeInt::operator=(int other)
 {
 	number.emptyList();
+	if(other < 0)
+	{
+		this->negative = true;
+		other *= -1;
+	}
 	while(other != 0)
 	{
 		number.insertHead(other%10);
@@ -632,7 +727,10 @@ largeInt::largeInt(int other)
 {
 	radix = 10;
 	if(other < 0)
-		negative = true;
+	{
+		this->negative = true;
+		other *= -1;
+	}
 	else
 		negative = false;
 	number.emptyList();
@@ -684,4 +782,16 @@ void largeInt::insertHead(short d)
 void largeInt::insertTail(short d)
 {
 	number.insertTail(d);
+}
+long largeInt::toLong()
+{
+	long multiplier = 1;
+	long sum = 0;
+	largeInt one(1);
+	for(iterator<short> i = number.rbegin();i != nullptr; i--)
+	{
+		sum += multiplier* *i;
+		multiplier *= 10;
+	}
+	return sum;
 }

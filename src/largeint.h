@@ -10,6 +10,7 @@
 #include "unsortedlist.h"
 #include <string>
 #include <iostream>
+#include <stack>
 #include "bigintdivresult.h"
 
 
@@ -26,6 +27,7 @@ private:
 	short radix;
 	bool isZero();
 	void trim();
+	long toLong();
 	unsortedList<short> addTwoLists(unsortedList<short> &summand1,unsortedList<short> &summand2,short radix);
 	unsortedList<short> subtractTwoLists(unsortedList<short> minuend,unsortedList<short> subtrahend, short radix);
 	//Will run as long as divisor is less than 2^15
@@ -39,7 +41,7 @@ public:
 	largeInt(std::string num);
 	largeInt(int other);
 	largeInt(unsortedList<short> num,bool isNegative = false,short radix = 10);
-	bool operator<=(largeInt& o);
+	largeInt operator^(largeInt power);
 	void operator=(const largeInt& other);
 	void operator=(int other);
 	bool operator==(largeInt& other);
@@ -49,16 +51,24 @@ public:
 	void operator*=(largeInt multiplyer);
 	largeInt operator*(largeInt multiplyer);
 	largeInt operator/(largeInt dividend);
+	largeInt operator/=(largeInt divisor);
 	largeInt operator%(largeInt dividend);
+	largeInt operator%=(largeInt dividend);
 	void operator+=(largeInt summand);
 	largeInt operator+(largeInt summand);
+	bool operator<=(largeInt& o);
 	bool operator<(largeInt&);
+	bool operator>(largeInt&);
+	bool operator>=(largeInt&);
+	//setRadix() actually changes the data structure,
+	//so always iterators instantiated after this will not point at the correct element
 	void setRadix(short radix);
 	bool isNegative();
 	void insertHead(short);
 	void insertTail(short);
 	void printNum();
+	friend std::ostream& operator<<(std::ostream &o,largeInt &l);
+	friend std::istream& operator>>(std::istream &o,largeInt &l);
 };
-
 
 #endif /* LARGEINT_H_ */

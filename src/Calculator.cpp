@@ -65,6 +65,8 @@ int main(int argc,char* argv[])
     			"Show Operations",
     		/*command line command*/
     			"o",
+			/*message*/
+				"Show Operations status: ",
     		/*variable*/
     			false);
 
@@ -74,6 +76,8 @@ int main(int argc,char* argv[])
     			"Debug Mode",
     		/*command line command*/
     			"d",
+			/*message*/
+				"Debug Mode status: ",
     		/*variable*/
     			false);
     	boolsettings[set.getCommand()] = set;
@@ -82,6 +86,8 @@ int main(int argc,char* argv[])
     			"Loop calculator",
     		/*command line command*/
     			"l",
+			/*message*/
+				"Looping status: ",
     		/*variable*/
     			true);
     	boolsettings[set.getCommand()] = set;
@@ -90,6 +96,8 @@ int main(int argc,char* argv[])
     			"Print current Date, and time taken to run calculation",
     		/*command line command*/
     			"t",
+			/*message*/
+				"Show Time taken to run status: ",
     		/*variable*/
     			false);
     	boolsettings[set.getCommand()] = set;
@@ -166,9 +174,10 @@ void interpretParam(std::string &p)
 		setting<bool> set = boolsettings[p];
 		//inverts setting value via operator overloads of = and *
 		bool data = !*set;
-		setting<bool> newSetting(set.getName(),set.getCommand(),data);
+		setting<bool> newSetting(set.getName(),set.getCommand(),set.getMessage(),data);
 		boolsettings.erase(p);
 		boolsettings[p] = newSetting;
+		std::cout<<newSetting.getMessage()<<*newSetting<<std::endl;
 	}
 	else if (cmpstr(p,"u") || cmpstr(p,"-u"))//undo
 	{
@@ -208,6 +217,7 @@ void interpretParam(std::string &p)
 		std::cout<<"\nd to show debug information in console\n";
 		std::cout<<"u to show execute previous statement in console or \"undo\"\n";
 		std::cout<<"r to show \"redo\"\n";
+		std::cout<<"l to quit or close the program\n";
 	}
 
 	p = "";
@@ -215,7 +225,6 @@ void interpretParam(std::string &p)
 
 void calcWithOptions()
 {
-
 	bool timeInstruction = *boolsettings["t"];
 
 		  std::chrono::system_clock::time_point start,end;
@@ -224,7 +233,7 @@ void calcWithOptions()
 		  }
 		  //beginning of calculation
 		  //------------------------
-		  largeInt result = calculateExpression(expr);
+		  largeInt result(calculateExpression(expr));
 		  //------------------------
 
 		  if(timeInstruction){
@@ -238,7 +247,7 @@ void calcWithOptions()
 		  }
 
 		  std::cout<<"Final Answer: "<<std::endl;
-		  result.printNum();
+		  std::cout<<result<<std::endl;
 
 }
 bool hasChar(const std::string &dat,const char &c)
@@ -350,14 +359,6 @@ largeInt calculateExpression(std::string exp)
 	    ((currentChar == '-' || currentChar == '.')&& (i == 0 || isNonParentheticalOperator(exp[i-1]) || exp[i-1] =='(')
 	    ))
 	    {
-	    	//This comment block must be enabled to use Integer instead of long
-	    	//as the number's datatype
-	    	/*if(cmpstr(typeid(and1).name(),"i"))
-	    	{
-	  	      int nextInt = getNextInt<int>(exp,i);
-	  	      initialOperands.push(nextInt);
-	    	}
-	    	else */
 	    	largeInt nextInt = getNextInt(exp,i);
 	  	      initialOperands.push(nextInt);
 
@@ -583,11 +584,7 @@ double getNextDouble(std::string data,int &index)
 int getPriority(char ator)
 {
   int priority = 0;
-  if(ator == '(' || ator == ')')
-  {
-    priority = 0;
-  }
-  else if (ator == '^')
+  if (ator == '^')
   {
     priority = 90;
   }
@@ -599,6 +596,8 @@ int getPriority(char ator)
   {
     priority = 70;
   }
+  else if (ator == '<' || ator == '>' || ator == '=')
+	  priority = 60;
   return priority;
 }
 
@@ -627,19 +626,21 @@ largeInt calc(char op,largeInt and1,largeInt and2)
         }
         else if(op == '^')
         {
-          result = 1;
-          for(largeInt i = 0;i<and2;i = i+1)
-          result *= and1;
+          result = and1^and2;
         }
+        else if( op == '>')
+        	result = (int) (and1 > and2);
+        else if( op == '<')
+        	result = (int) (and1 < and2);
+        else if( op == '=')
+        	result = (int) (and1 == and2);
         else
           result = -400;
+
     if(*boolsettings["o"])
     {
-      and1.printNum();
-  	  std::cout<<op;
-  	  and2.printNum();
-  	  std::cout<<" = ";
-  	  result.printNum();
+  	  std::cout<<and1<<op<<and2;
+  	  std::cout<<" = "<<result;
   	  std::cout<<std::endl;
     }
     return result;
@@ -647,11 +648,13 @@ largeInt calc(char op,largeInt and1,largeInt and2)
 
 bool isOperator(char s)
 {
-  return s == '&' || s == '|' || s == '+' || s == '-' || s == '*' || s == '/' || s == '^' || s == '(' || s == ')' || s == '%';
+  return s == '>' || s == '<' || s == '='
+		  || s == '&' || s == '|' || s == '+' || s == '-' || s == '*' || s == '/' || s == '^' || s == '(' || s == ')' || s == '%';
 }
 bool isNonParentheticalOperator(char s)
 {
-    return s == '&' || s == '|'  || s == '+' || s == '-' || s == '*' || s == '/' || s == '^' || s == '%';
+    return s == '>' || s == '<' || s == '='
+  		  || s == '&' || s == '|'  || s == '+' || s == '-' || s == '*' || s == '/' || s == '^' || s == '%';
 }
 bool isNumeric(char c)
 {
