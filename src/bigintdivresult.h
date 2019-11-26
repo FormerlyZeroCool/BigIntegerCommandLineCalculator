@@ -11,14 +11,14 @@
 #include "unsortedlist.h"
 
 struct bigDivResult{
-	unsortedList<short> quotientNum;
+	UnsortedList<short> quotientNum;
 	bool quotientIsNeg;
-	unsortedList<short> remainderNum;
+	UnsortedList<short> remainderNum;
 	bool remainderIsNeg;
 	bigDivResult(
-	unsortedList<short> quotientNum,
+	UnsortedList<short> quotientNum,
 	bool quotientIsNeg,
-	unsortedList<short> remainderNum,
+	UnsortedList<short> remainderNum,
 	bool remainderIsNeg)
 	:quotientNum(quotientNum),quotientIsNeg(quotientIsNeg),remainderNum(remainderNum),remainderIsNeg(remainderIsNeg)
 	{

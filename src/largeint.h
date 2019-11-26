@@ -15,51 +15,53 @@
 
 
 struct divResult{
-	unsortedList<short> quotient;
+	UnsortedList<short> quotient;
 	short remainder;
-	divResult(unsortedList<short> q,short r):quotient(q),remainder(r){}
+	divResult(UnsortedList<short> q,short r):quotient(q),remainder(r){}
 };
 //Big Endian
-class largeInt{
+class LargeInt{
 private:
-	unsortedList<short> number;
+	UnsortedList<short> number;
 	bool negative;
 	short radix;
 	bool isZero();
 	void trim();
 	long toLong();
-	unsortedList<short> addTwoLists(unsortedList<short> &summand1,unsortedList<short> &summand2,short radix);
-	unsortedList<short> subtractTwoLists(unsortedList<short> minuend,unsortedList<short> subtrahend, short radix);
+	//Simple function to add two lists together cannot handle summand2+(-summand)
+	UnsortedList<short> addTwoLists(UnsortedList<short> &summand1,UnsortedList<short> &summand2,short radix);
+	//Simple subtraction function, cannot handle minuend<subtrahend
+	UnsortedList<short> subtractTwoLists(UnsortedList<short> minuend,UnsortedList<short> subtrahend, short radix);
 	//Will run as long as divisor is less than 2^15
-	divResult divideList(unsortedList<short> dividend,short divisor,short radix);
+	divResult divideList(UnsortedList<short> dividend,short divisor,short radix);
 	//Should always run, but less efficiently
-	bigDivResult divideTwoLargeInt(largeInt divisor,largeInt dividend,short radix);
+	bigDivResult divideTwoLargeInt(LargeInt divisor,LargeInt dividend,short radix);
 public:
 
-	largeInt getBinVersion();
-	largeInt():negative(false),radix(10){}
-	largeInt(std::string num);
-	largeInt(int other);
-	largeInt(unsortedList<short> num,bool isNegative = false,short radix = 10);
-	largeInt operator^(largeInt power);
-	void operator=(const largeInt& other);
+	LargeInt getBinVersion();
+	LargeInt():negative(false),radix(10){}
+	LargeInt(std::string num);
+	LargeInt(int other);
+	LargeInt(UnsortedList<short> num,bool isNegative = false,short radix = 10);
+	LargeInt operator^(LargeInt power);
+	void operator=(const LargeInt& other);
 	void operator=(int other);
-	bool operator==(largeInt& other);
+	bool operator==(LargeInt& other);
 	bool operator!=(int other);
-	largeInt operator-(largeInt subtrahend);
-	void operator-=(largeInt subtrahend);
-	void operator*=(largeInt multiplyer);
-	largeInt operator*(largeInt multiplyer);
-	largeInt operator/(largeInt dividend);
-	largeInt operator/=(largeInt divisor);
-	largeInt operator%(largeInt dividend);
-	largeInt operator%=(largeInt dividend);
-	void operator+=(largeInt summand);
-	largeInt operator+(largeInt summand);
-	bool operator<=(largeInt& o);
-	bool operator<(largeInt&);
-	bool operator>(largeInt&);
-	bool operator>=(largeInt&);
+	LargeInt operator-(LargeInt subtrahend);
+	void operator-=(LargeInt subtrahend);
+	void operator*=(LargeInt multiplyer);
+	LargeInt operator*(LargeInt multiplyer);
+	LargeInt operator/(LargeInt dividend);
+	LargeInt operator/=(LargeInt divisor);
+	LargeInt operator%(LargeInt dividend);
+	LargeInt operator%=(LargeInt dividend);
+	void operator+=(LargeInt summand);
+	LargeInt operator+(LargeInt summand);
+	bool operator<=(LargeInt& o);
+	bool operator<(LargeInt&);
+	bool operator>(LargeInt&);
+	bool operator>=(LargeInt&);
 	//setRadix() actually changes the data structure,
 	//so always iterators instantiated after this will not point at the correct element
 	void setRadix(short radix);
@@ -67,8 +69,8 @@ public:
 	void insertHead(short);
 	void insertTail(short);
 	void printNum();
-	friend std::ostream& operator<<(std::ostream &o,largeInt &l);
-	friend std::istream& operator>>(std::istream &o,largeInt &l);
+	friend std::ostream& operator<<(std::ostream &o,LargeInt &l);
+	friend std::istream& operator>>(std::istream &o,LargeInt &l);
 };
 
 #endif /* LARGEINT_H_ */

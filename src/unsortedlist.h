@@ -132,7 +132,7 @@ template <class t>
 
 
 template <class t>
-class unsortedList
+class UnsortedList
 {
   private:
   node<t> *head;
@@ -140,11 +140,11 @@ class unsortedList
   long len;
 
   public:
-unsortedList();
-unsortedList(const unsortedList<t>&);
-~unsortedList();
-void operator=(const unsortedList<t>&);
-bool operator==(const unsortedList<t>&);
+UnsortedList();
+UnsortedList(const UnsortedList<t>&);
+~UnsortedList();
+void operator=(const UnsortedList<t>&);
+bool operator==(const UnsortedList<t>&);
 bool isEmpty();
 void insertHead(t);
 void insertTail(t);
@@ -162,7 +162,7 @@ iterator<t> rend();
 
 
 template <class t>
-void unsortedList<t>::emptyList()
+void UnsortedList<t>::emptyList()
 {
 	  while(head != nullptr)
 	  {
@@ -178,12 +178,12 @@ void unsortedList<t>::emptyList()
 }
 
 template <class t>
-bool unsortedList<t>::isEmpty()
+bool UnsortedList<t>::isEmpty()
 {
 	return (head == nullptr);
 }
 template <class t>
-void unsortedList<t>::removeHead()
+void UnsortedList<t>::removeHead()
 {
 	if(head != nullptr)
 	{
@@ -194,7 +194,7 @@ void unsortedList<t>::removeHead()
 	}
 }
 template <class t>
-void unsortedList<t>::removeTail()
+void UnsortedList<t>::removeTail()
 {
 	if(head != nullptr)
 	{
@@ -205,12 +205,12 @@ void unsortedList<t>::removeTail()
 	}
 }
 template <class t>
-long unsortedList<t>::length()
+long UnsortedList<t>::length()
 {
 	return this->len;
 }
 template <class t>
-bool unsortedList<t>::operator==(const unsortedList<t>& other)
+bool UnsortedList<t>::operator==(const UnsortedList<t>& other)
 {
 	node<t> *p = this->head;
 	node<t> *o = other.head;
@@ -227,34 +227,34 @@ bool unsortedList<t>::operator==(const unsortedList<t>& other)
 	return isEqual;
 }
 template <class t>
-iterator<t> unsortedList<t>::begin()
+iterator<t> UnsortedList<t>::begin()
 {
   return iterator<t>(head);
 }
 template <class t>
-iterator<t> unsortedList<t>::end()
+iterator<t> UnsortedList<t>::end()
 {
   return iterator<t>(nullptr/*tail->next*/);
 }
 template <class t>
-iterator<t> unsortedList<t>::rbegin()
+iterator<t> UnsortedList<t>::rbegin()
 {
   return iterator<t>(tail);
 }
 template <class t>
-iterator<t> unsortedList<t>::rend()
+iterator<t> UnsortedList<t>::rend()
 {
   return iterator<t>(nullptr/*head->previous*/);
 }
 
 
 template <class t>
-int unsortedList<t>::getLength()
+int UnsortedList<t>::getLength()
 {
   return len;
 }
 template <class t>
-void unsortedList<t>::printList()
+void UnsortedList<t>::printList()
 {
   node<t>* p = head;
 
@@ -273,7 +273,7 @@ void unsortedList<t>::printList()
 }
 
 template <class t>
-void unsortedList<t>::insertTail(t item)
+void UnsortedList<t>::insertTail(t item)
 {
     if(tail == nullptr)
     {
@@ -290,7 +290,7 @@ void unsortedList<t>::insertTail(t item)
     len++;
 }
 template <class t>
-void unsortedList<t>::insertHead(t item)
+void UnsortedList<t>::insertHead(t item)
 {
     if(head == nullptr)
     {
@@ -307,7 +307,7 @@ void unsortedList<t>::insertHead(t item)
     len++;
 }
 template <class t>
-unsortedList<t>::unsortedList(const unsortedList<t> &o)
+UnsortedList<t>::UnsortedList(const UnsortedList<t> &o)
 {
 	head = nullptr;
 	tail = nullptr;
@@ -320,14 +320,14 @@ unsortedList<t>::unsortedList(const unsortedList<t> &o)
   }
 }
 template <class t>
-unsortedList<t>::unsortedList()
+UnsortedList<t>::UnsortedList()
 {
   len = 0;
   head = nullptr;
   tail = nullptr;
 }
 template <class t>
-unsortedList<t>::~unsortedList()
+UnsortedList<t>::~UnsortedList()
 {
   while(head != nullptr)
   {
@@ -341,7 +341,7 @@ unsortedList<t>::~unsortedList()
 }
 
 template <class t>
-void unsortedList<t>::operator=(const unsortedList<t> &o)
+void UnsortedList<t>::operator=(const UnsortedList<t> &o)
 {
 	this->emptyList();
 	head = nullptr;

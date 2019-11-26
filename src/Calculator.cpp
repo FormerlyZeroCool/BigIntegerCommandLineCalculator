@@ -29,14 +29,14 @@ bool hasChar(const std::string &dat,const char &c);
 /////////////////////////////
 //Logic
 /////////////////////////////
-largeInt calculateExpression(std::string exp);
+LargeInt calculateExpression(std::string exp);
 template <class t>
-largeInt calc(char op,largeInt and1,largeInt and2);
+LargeInt calc(char op,LargeInt and1,LargeInt and2);
 template <class t>
 t processStack(linkedStack<t> &operands,linkedStack<char> &operators);
 //string interpreters/Logic
 /////////////////////////////
-largeInt getNextInt(std::string data,int &index);
+LargeInt getNextInt(std::string data,int &index);
 double getNextDouble(std::string data,int &index);
 /////////////////////////////
 //UI
@@ -52,9 +52,23 @@ linkedStack<std::string> undoneExp;
 //variable to hold expression for parsing
 std::string expr = "";
 std::unordered_map<std::string,setting<bool> > boolsettings;
-
+long ackCount = 0;
+const int ack(const int m,const int n)
+{
+	ackCount++;
+	int ans;
+	if(m == 0 )
+		ans = n+1;
+	else if (n == 0)
+		ans = ack(m - 1,1);
+	else
+		ans = ack(m - 1, ack(m,n - 1));
+	std::cout<<"Answer to Ackerman("<<m<<','<<n<<')'<<ans<<std::endl;
+	return ans;
+}
 int main(int argc,char* argv[])
 {
+//ack(4,1);
 	std::cout << std::endl;
   /*
    * Initializing values in settings hashmap
@@ -233,7 +247,7 @@ void calcWithOptions()
 		  }
 		  //beginning of calculation
 		  //------------------------
-		  largeInt result(calculateExpression(expr));
+		  LargeInt result(calculateExpression(expr));
 		  //------------------------
 
 		  if(timeInstruction){
@@ -282,7 +296,7 @@ bool cmpstr(const std::string &s1,const std::string &s2)
 	}
 	return isEqual;
 }
-largeInt calculateExpression(std::string exp)
+LargeInt calculateExpression(std::string exp)
 {
 	//get debug setting from boolsettings hashmap,
 	//then using * operator to get setting data
@@ -291,11 +305,11 @@ largeInt calculateExpression(std::string exp)
 	//variable that is always a copy
 	  char peeker;
 	  //variables to hold the operands
-	  largeInt and1,and2;
+	  LargeInt and1,and2;
 	  //c is a variable to store each of the characters in the expression
 	  //in the for loop
 	  char currentChar;
-	  linkedStack<largeInt> initialOperands;
+	  linkedStack<LargeInt> initialOperands;
 	  linkedStack<char> initialOperators;
 	  if(debug){
 	  std::cout<<"Calculating expression: "<<exp<<std::endl;
@@ -319,7 +333,7 @@ largeInt calculateExpression(std::string exp)
 	        std::cout<<std::endl<<"Parentheses Process:"<<std::endl;
 	      }
 	      initialOperators.top(peeker);
-	      linkedStack<largeInt> inParenthesesOperands;
+	      linkedStack<LargeInt> inParenthesesOperands;
 	      linkedStack<char> inParenthesesOperators;
 	      while(!initialOperators.isEmpty() && peeker != '(')
 	      {
@@ -359,7 +373,7 @@ largeInt calculateExpression(std::string exp)
 	    ((currentChar == '-' || currentChar == '.')&& (i == 0 || isNonParentheticalOperator(exp[i-1]) || exp[i-1] =='(')
 	    ))
 	    {
-	    	largeInt nextInt = getNextInt(exp,i);
+	    	LargeInt nextInt = getNextInt(exp,i);
 	  	      initialOperands.push(nextInt);
 
 	    }
@@ -384,7 +398,7 @@ largeInt calculateExpression(std::string exp)
 	    }
 	  }
 	//Finally pop all values off initial stack onto final stacks for processing
-	  linkedStack<largeInt> finalOperands;
+	  linkedStack<LargeInt> finalOperands;
 	  linkedStack<char> finalOperators;
 	while(!initialOperands.isEmpty() || !initialOperators.isEmpty())
 	{
@@ -409,78 +423,68 @@ largeInt calculateExpression(std::string exp)
 template <class t>
 t processStack(linkedStack<t> &operands,linkedStack<char> &operators)
 {
-  t result = 0,and1 = 0,and2 = 0, and3 = 0,and4 = 0;
-  char firstOperator,nextOperator,finalOperator;
-  while(!operators.isEmpty() && operands.length()>1)
-{
+  t result = 0,and1 = 0,and2 = 0;
+  char firstOperator,nextOperator;
+  //loop to process expression saved in stack
+ while(!operators.isEmpty() && operands.length()>1)
+ {
 //initialize values so we can make sure no garbage, or previous values is in the variables
 //so top function can work properly
-  nextOperator = 'a',finalOperator ='a',firstOperator = 'a';
-
-  operands.top(and1);
-  operands.pop();
-
-  operands.top(and2);
-  operands.pop();
-
-  operators.top(firstOperator);
-  operators.pop();
-
-  operators.top(nextOperator);
-  if(getPriority(nextOperator)>getPriority(firstOperator))
+  nextOperator = 'a',firstOperator = 'a';
+//now with more stacks!
+  //these stacks handle respecting priority, the can handle as many priority levels as you like
+linkedStack<t> savedOperands;
+linkedStack<char> savedOperators;
+//do while loop to search for operation with highest priority
+  do
   {
-    operators.pop();
-    operators.top(finalOperator);
+	  operands.top(and1);
+	  operands.pop();
 
-    if(getPriority(finalOperator)>getPriority(nextOperator))
-    {
-      operators.pop();
-      operators.push(nextOperator);
-      operators.push(firstOperator);
+	  operands.top(and2);
 
-      operands.top(and3);
-      operands.pop();
+	  operators.top(firstOperator);
+	  operators.pop();
 
-      operands.top(and4);
-      operands.pop();
+	  operators.top(nextOperator);
+	  if(getPriority(nextOperator)>getPriority(firstOperator))
+	  {
+		  savedOperators.push(firstOperator);
+		  savedOperands.push(and1);
+	  }
 
-      operands.push(calc(finalOperator,and3,and4));
-
-      operands.push(and2);
-      operands.push(and1);
-
-
-    }
-    else
-    {
-      operands.top(and3);
-      operands.pop();
-
-      operands.push(calc(nextOperator,and2,and3));
-
-      operands.push(and1);
-      operators.push(firstOperator);
-    }
-
+  } while(getPriority(nextOperator)>getPriority(firstOperator));
+  //perform found operation, and remove remaining operand from stack
+  operands.pop();
+  operands.push(calc(firstOperator,and1,and2));
+  //add overridden operators back to original stack
+  while(!savedOperators.isEmpty())
+  {
+	  savedOperators.top(firstOperator);
+	  savedOperators.pop();
+	  operators.push(firstOperator);
   }
-  else
+  //replace overridden operands back to original stack
+  while(!savedOperands.isEmpty())
   {
-    operands.push(calc(firstOperator,and1,and2));
+	  savedOperands.top(and1);
+	  savedOperands.pop();
+	  operands.push(and1);
   }
 }
-
+//get result from processing expression
 operands.top(result);
   return result;
 }
 
-largeInt getNextInt(std::string data,int &index)//index is a reference so that when we return
+LargeInt getNextInt(std::string data,int &index)//index is a reference so that when we return
 //The for loop which passed it's counter variable is updated to look at the next char after
 //This number
 {
   bool stillReading = true;
   bool isNegative = false;
   char previous;
-  largeInt num = 0;
+  LargeInt num = 0;
   if(index-1 >= 0)
   {
     previous = data[index-1];
@@ -601,9 +605,9 @@ int getPriority(char ator)
   return priority;
 }
 
-largeInt calc(char op,largeInt and1,largeInt and2)
+LargeInt calc(char op,LargeInt and1,LargeInt and2)
 {
-	largeInt result = 0;
+	LargeInt result = 0;
         if(op=='+')
         	result = (and1+and2);
         else if(op == '-')
