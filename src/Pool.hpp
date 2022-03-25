@@ -22,7 +22,7 @@ public:
     Pool(int_fast32_t chunkSize): chunkSize(chunkSize) { 
         pool.reserve(16);
         freeList.reserve(4096<<2);
-        poolSize = chunkSize<<12; 
+        poolSize = chunkSize<<16; 
         poolPtr = std::malloc(poolSize); 
         pool.push_back(poolPtr); 
     }
