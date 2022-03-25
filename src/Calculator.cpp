@@ -12,7 +12,7 @@
 #include <string>
 #include <iostream>
 
-#include "stack.h"
+#include "stack.hpp"
 #include "setting.h"
 #include "largeint.h"
 

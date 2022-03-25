@@ -8,7 +8,7 @@
 #ifndef SRC_BIGINTDIVRESULT_H_
 #define SRC_BIGINTDIVRESULT_H_
 
-#include "unsortedlist.h"
+#include "unsortedlist.hpp"
 
 struct bigDivResult{
 	UnsortedList<short> quotientNum;

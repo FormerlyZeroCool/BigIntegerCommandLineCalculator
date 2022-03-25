@@ -6,7 +6,6 @@
  */
 
 #include "largeint.h"
-
 //Will run as long as divisor is less than 2^15
 divResult LargeInt::divideList(UnsortedList<short> dividend,short divisor,short radix)
 {
